@@ -48,55 +48,6 @@ bool associativity(char o) {
 }
 
 
-bool read_num(std::istream &in, u_long &curr, double &num) {
-    bool ok = 0, frac = 0, first_dot = 1;
-    short frac_digits = 0;
-    char c = '\0', next = '0';
-    unsigned frac_part = 0;
-    
-    num = 0;
-    
-    next = in.peek();
-    
-    if (((next >= '0') && (next <= '9')) || (next == '.') || (next == ','))
-        ok = 1;
-    
-    while ((ok) && (((next >= '0') && (next <= '9')) || (next == '.') || (next == ','))) {
-        in.get(c);
-        curr++;
-        
-        if ((first_dot) && ((c == '.') || (c == ','))) {
-            first_dot = 0;
-            frac = 1;
-        }
-        
-        else if ((c >= '0') && (c <= '9')) {
-            if (!frac)
-                num = 10*num + c - '0';
-            
-            else {
-                frac_digits++;
-                frac_part = 10*frac_part + c - '0';
-            }
-        }
-        
-        else
-            ok = 0;
-        
-        if (ok)
-            next = in.peek();
-    }
-    
-    if ((frac) && (num == 0) && (frac_digits == 0))
-        ok = 0;
-    
-    if (ok)
-        num += frac_part * pow(10, -frac_digits);
-    
-    return ok;
-}
-
-
 bool read_num(std::istream &in, u_long &curr, char num[16]) {
     bool ok = 0, first_dot = 1;
     char c = '\0', next = '0';
