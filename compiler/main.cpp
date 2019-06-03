@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <cmath>
 
 
 u_short priority(char o) {
