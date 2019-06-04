@@ -248,20 +248,20 @@ uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long 
                     rpn << 'F';
             }
             
-            else if (next == 'e') {
-                ok = read_word(in, curr, f_entier, 6);
-                
-                if (ok) {
-                    c = 'e';
-                    o = 1;
-                }
-            }
-            
             else if (next == 'f') {
                 ok = read_word(in, curr, f_frac, 4);
                 
                 if (ok) {
                     c = 'f';
+                    o = 1;
+                }
+            }
+            
+            else if (next == 'e') {
+                ok = read_word(in, curr, f_entier, 6);
+                
+                if (ok) {
+                    c = 'e';
                     o = 1;
                 }
             }
@@ -486,17 +486,17 @@ bool generate_code(std::stringstream &rpn, std::ostream &code) {
         
         else if (next == '!') {
             rpn.get(c);
-            code << "\tOR" << std::endl;
+            code << "\tOR_" << std::endl;
         }
         
         else if (next == 'f') {
             rpn.get(c);
-            code << "\tFRC" << std::endl;
+            code << "\tfFRC" << std::endl;
         }
         
         else if (next == 'e') {
             rpn.get(c);
-            code << "\tENT" << std::endl;
+            code << "\tfENT" << std::endl;
         }
         
         else if (next == ' ')
