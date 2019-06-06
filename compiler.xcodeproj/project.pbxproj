@@ -67,8 +67,8 @@
 				3317E635227DAB0900F0DCC2 /* main.cpp */,
 				3317E63F227DD4A800F0DCC2 /* globals.hpp */,
 				3317E63C227DD08200F0DCC2 /* stack.hpp */,
-				333FAB0122A9A8D80057E1A1 /* compiler.hpp */,
 				3317E63D227DD08300F0DCC2 /* stack.cpp */,
+				333FAB0122A9A8D80057E1A1 /* compiler.hpp */,
 				333FAB0022A9A8D80057E1A1 /* compiler.cpp */,
 			);
 			path = compiler;
