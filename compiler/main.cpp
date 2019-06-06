@@ -106,9 +106,6 @@ bool read_word(std::istream &in, u_long &curr, const char word[], ushort word_le
             in.get(c);
             curr++;
         }
-        
-        else
-            curr -= i;
             
         i++;
     }
@@ -356,6 +353,9 @@ uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long 
         }
         
         next = in.peek();
+        
+        if (in.fail())
+            state |= READ_ERR;
     }
     
     if (state == OK)
@@ -491,12 +491,12 @@ bool generate_code(std::stringstream &rpn, std::ostream &code) {
         
         else if (next == 'f') {
             rpn.get(c);
-            code << "\tfFRC" << std::endl;
+            code << "\tFRC" << std::endl;
         }
         
         else if (next == 'e') {
             rpn.get(c);
-            code << "\tfENT" << std::endl;
+            code << "\tENT" << std::endl;
         }
         
         else if (next == ' ')
@@ -522,10 +522,12 @@ int main(int argc, const char *argv[]) {
     bool from_file = 0, ok = 0;
     
     if ((argc > 3) || (argc == 2)) {
-        std::cerr << "Некорректное число входных аргументов" << std::endl;
+        std::cerr << std::endl << "Некорректное число входных аргументов" << std::endl;
     }
     
     else if (argc == 1) {
+        std::ofstream code;
+        
         ok = 1;
         from_file = 0;
         
@@ -533,8 +535,29 @@ int main(int argc, const char *argv[]) {
         
         recognizer_res = recognizer(std::cin, from_file, wrong_symbol, wrong_symbol_place, wrong_symbol_line, rpn);
         
-        if (recognizer_res == OK)
+        if (recognizer_res == OK) {
             std::cout << rpn.str() << std::endl;
+            
+            ok = 0;
+            
+            while (!ok) {
+                std::cout << std::endl << "Введите имя файла для записи кода для стекового устройства" << std::endl;
+                rewind(stdin);
+                std::cin.getline(code_path, 1024, '\n');
+                
+                code.open(code_path, std::ios::trunc);
+                
+                ok = code.is_open();
+                
+                if (ok) {
+                    ok = generate_code(rpn, code);
+                    code.close();
+                }
+                
+                else
+                    std::cerr << std::endl << "Ошибка при открытии файла «" << code_path << "»" << std::endl;
+            }
+        }
     }
     
     else if (argc == 3) {
@@ -554,13 +577,14 @@ int main(int argc, const char *argv[]) {
             std::cerr << "Файл «" << argv[1] << "» пуст" << std::endl;
         
         else {
-            ok = 1;
+            code_path[0] = '\0';
+            strcat(code_path, argv[2]);
             from_file = 1;
             recognizer_res = recognizer(fin, from_file, wrong_symbol, wrong_symbol_place, wrong_symbol_line, rpn);
             
             if (recognizer_res == OK) {
                 fout << rpn.str() << std::endl << std::endl;
-                generate_code(rpn, fout);
+                ok = generate_code(rpn, fout);
             }
             
             fin.close();
@@ -568,35 +592,20 @@ int main(int argc, const char *argv[]) {
         }
     }
     
-    if (ok) {
-        if (recognizer_res == OK) {
-            if (argc == 1) {
-                std::ofstream code;
-                ok = 0;
-                
-                while (!ok) {
-                    std::cout << std::endl << "Введите имя файла для генерации кода для стекового устройства" << std::endl;
-                    rewind(stdin);
-                    std::cin.getline(code_path, 1024, '\n');
-                    
-                    code.open(code_path, std::ios::trunc);
-                    
-                    ok = code.is_open();
-                    
-                    if (ok) {
-                        generate_code(rpn, code);
-                        code.close();
-                    }
-                    
-                    else
-                        std::cerr << std::endl << "Ошибка при открытии файла «" << code_path << "»" << std::endl;
-                }
-            }
+    if (recognizer_res == OK) {
+        if (ok)
+            std::cout << std::endl << "Код для САЛУ записан в файл «" << code_path << "»" << std::endl;
+        
+        else
+            std::cout << std::endl << "Ошибка при записи кода для САЛУ в файл «" << code_path << "»" << std::endl;
         }
         
         else {
             if (recognizer_res & MEM_ERR)
                 std::cerr << "Ошибка памяти" << std::endl;
+            
+            if (recognizer_res & READ_ERR)
+                std::cerr << "Ошибка чтения" << std::endl;
             
             if (recognizer_res & UNEXPECTED) {
                 std::cerr << "Неожиданный символ ";
@@ -624,8 +633,7 @@ int main(int argc, const char *argv[]) {
                 std::cerr << "Несоответствие между количествами открывающих и закрывающих скобок" << std::endl;
         }
         
-        std::cout << std::endl;
-    }
+    std::cout << std::endl;
     
     return 0;
 }
