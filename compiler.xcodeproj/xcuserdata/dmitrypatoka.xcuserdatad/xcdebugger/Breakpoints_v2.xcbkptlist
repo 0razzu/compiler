@@ -14,25 +14,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "594"
-            endingLineNumber = "594"
-            landmarkName = "main(int argc, const char *argv[])"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "compiler/main.cpp"
-            timestampString = "581542624.703854"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
-            landmarkName = "recognizer(std::istream &amp;in, bool from_file, char &amp;wrong_symbol, u_long &amp;curr, u_long &amp;curr_line, std::stringstream &amp;rpn)"
-            landmarkType = "9">
+            endingLineNumber = "594">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
