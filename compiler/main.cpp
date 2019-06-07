@@ -10,7 +10,7 @@ int main(int argc, const char *argv[]) {
     char code_path[1024], wrong_symbol = '\0';
     u_long wrong_symbol_place = 0, wrong_symbol_line = 0;
     uint8_t recognizer_res = OK;
-    bool from_file = 0, ok = 0;
+    bool from_file = 0, ok = 0, files_ok = 1;
     
     if ((argc > 3) || (argc == 2)) {
         std::cerr << std::endl << "Некорректное число входных аргументов" << std::endl;
@@ -28,7 +28,7 @@ int main(int argc, const char *argv[]) {
             recognizer_res = recognizer(std::cin, from_file, wrong_symbol, wrong_symbol_place, wrong_symbol_line, rpn);
             
             if (recognizer_res == OK) {
-                std::cout << rpn.str() << std::endl;
+                std::cout << std::endl << rpn.str() << std::endl;
                 
                 ok = 0;
                 
@@ -59,14 +59,20 @@ int main(int argc, const char *argv[]) {
             fin.open(argv[1]);
             fout.open(argv[2], std::ios_base::trunc);
             
-            if (!fin.is_open())
-                std::cerr << "Не удалось открыть файл «" << argv[1] << "»" << std::endl;
-                
-            else if (!fout.is_open())
-                std::cerr << "Не удалось создать файл «" << argv[2] << "»" << std::endl;
+            if (!fin.is_open()) {
+                std::cerr << std::endl << "Не удалось открыть файл «" << argv[1] << "»" << std::endl;
+                files_ok = 0;
+            }
             
-            else if (fin.peek() == EOF)
-                std::cerr << "Файл «" << argv[1] << "» пуст" << std::endl;
+            else if (!fout.is_open()) {
+                std::cerr << std::endl << "Не удалось создать файл «" << argv[2] << "»" << std::endl;
+                files_ok = 0;
+            }
+            
+            else if (fin.peek() == EOF) {
+                std::cerr << std::endl << "Файл «" << argv[1] << "» пуст" << std::endl;
+                files_ok = 0;
+            }
             
             else {
                 code_path[0] = '\0';
@@ -84,14 +90,14 @@ int main(int argc, const char *argv[]) {
             }
         }
         
-        if (recognizer_res == OK) {
+        if ((recognizer_res == OK) && (files_ok)) {
             if (ok)
                 std::cout << std::endl << "Код для САЛУ записан в файл «" << code_path << "»" << std::endl;
             
             else
                 std::cout << std::endl << "Ошибка при записи кода для САЛУ в файл «" << code_path << "»" << std::endl;
             }
-            
+        
             else {
                 if (recognizer_res & MEM_ERR)
                     std::cerr << "Ошибка памяти" << std::endl;

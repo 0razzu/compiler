@@ -32,7 +32,7 @@ u_short priority(char o) {
 bool associativity(char o) {
     bool left = 1;
     
-    if ((o == '^') || (o == '~') || (o == 'p') || (o == 'm') || (o == '/') || (o == '&') || (o == '>') || (o == '<') || (o == '=') || (o == '#'))
+    if ((o == '^') || (o == '~') || (o == 'p') || (o == 'm') || (o == '/') || (o == '&') || (o == '+') || (o == '-') || (o == '>') || (o == '<') || (o == '=') || (o == '#'))
         left = 1;
     
     else if ((o == '*') || (o == '!') || (o = 'e') || (o = 'f'))
@@ -306,7 +306,13 @@ uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long 
             
             while ((!operators.isEmpty()) && (operators.peek() != '(')) {
                 operator_in_stack = operators.pop();
-                rpn << operator_in_stack;
+                
+                if ((operator_in_stack == 'p')  || (operator_in_stack == 'm') || (operator_in_stack == 'f') || (operator_in_stack == 'e'))
+                    rpn << ' ' << operator_in_stack << ' ';
+                
+                else
+                    rpn << operator_in_stack;
+                
                 add_space = 0;
             }
             
@@ -342,15 +348,21 @@ uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long 
             
             else {
                 operator_in_stack = operators.pop();
-                rpn << operator_in_stack;
+                
+                if ((operator_in_stack == 'p')  || (operator_in_stack == 'm') || (operator_in_stack == 'f') || (operator_in_stack == 'e'))
+                    rpn << ' ' << operator_in_stack << ' ';
+                
+                else
+                    rpn << operator_in_stack;
+                
                 add_space = 0;
             }
         }
         
-        next = in.peek();
-        
         if (in.fail())
             state |= READ_ERR;
+        
+        next = in.peek();
     }
     
     if (state == OK)
@@ -360,8 +372,13 @@ uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long 
             if (operator_in_stack == '(')
                 state |= BRACKETS;
             
-            else
-                rpn << operator_in_stack;
+            else {
+                if ((operator_in_stack == 'p')  || (operator_in_stack == 'm') || (operator_in_stack == 'f') || (operator_in_stack == 'e'))
+                    rpn << ' ' << operator_in_stack << ' ';
+                
+                else
+                    rpn << operator_in_stack;
+            }
         }
     
     if (state & UNEXPECTED) {
