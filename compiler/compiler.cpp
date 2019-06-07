@@ -43,20 +43,13 @@ bool associativity(char o) {
 
 
 bool read_num(std::istream &in, u_long &curr, char num[16]) {
-    bool ok = 0, first_dot = 1;
+    bool ok = 1, first_dot = 1;
     char c = '\0', next = '0';
     u_long curr_before_reading = curr;
     
     next = in.peek();
     
-    if (((next >= '0') && (next <= '9')) || (next == '.') || (next == ',')) {
-        for (u_short i = 0; i < 16; i++)
-            num[i] = '\0';
-        
-        ok = 1;
-    }
-    
-    while ((ok) && (((next >= '0') && (next <= '9')) || (next == '.') || (next == ','))) {
+    while ((ok) && (curr - curr_before_reading < 16) && (((next >= '0') && (next <= '9')) || (next == '.') || (next == ','))) {
         in.get(c);
         curr++;
         
@@ -82,6 +75,9 @@ bool read_num(std::istream &in, u_long &curr, char num[16]) {
     
     if ((!first_dot) && (curr - curr_before_reading == 1))
         ok = 0;
+    
+    else
+        num[curr - curr_before_reading] = '\0';
     
     return ok;
 }
