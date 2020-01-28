@@ -109,7 +109,7 @@ bool read_word(std::istream &in, u_long &curr, const char word[], ushort word_le
 
 uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long &curr, u_long &curr_line, std::stringstream &rpn) {
     bool ok = 1, prev_lexeme_is_num = 0, add_space = 0, o = 0;
-    const char v_true[5] = "TRUE", v_false[6] = "FALSE", f_frac[5] = "frac", f_entier[7] = "entier";
+    const char V_TRUE[5] = "TRUE", V_FALSE[6] = "FALSE", F_FRAC[5] = "frac", F_ENTIER[7] = "entier";
     char next, c = '\0', num[16], operator_in_stack;
     uint8_t state = OK;
     Stack<char> operators;
@@ -223,21 +223,21 @@ uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long 
             ok = 0;
             
             if (next == 'T') {
-                ok = read_word(in, curr, v_true, 4);
+                ok = read_word(in, curr, V_TRUE, 4);
                 
                 if (ok)
                     rpn << 'T';
             }
             
             else if (next == 'F') {
-                ok = read_word(in,curr, v_false, 5);
+                ok = read_word(in,curr, V_FALSE, 5);
                 
                 if (ok)
                     rpn << 'F';
             }
             
             else if (next == 'f') {
-                ok = read_word(in, curr, f_frac, 4);
+                ok = read_word(in, curr, F_FRAC, 4);
                 
                 if (ok) {
                     c = 'f';
@@ -246,7 +246,7 @@ uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long 
             }
             
             else if (next == 'e') {
-                ok = read_word(in, curr, f_entier, 6);
+                ok = read_word(in, curr, F_ENTIER, 6);
                 
                 if (ok) {
                     c = 'e';
@@ -304,7 +304,7 @@ uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long 
                 operator_in_stack = operators.pop();
                 
                 if ((operator_in_stack == 'p')  || (operator_in_stack == 'm') || (operator_in_stack == 'f') || (operator_in_stack == 'e'))
-                    rpn << ' ' << operator_in_stack << ' ';
+                    rpn << ' ' << operator_in_stack;
                 
                 else
                     rpn << operator_in_stack;
@@ -346,7 +346,7 @@ uint8_t recognizer(std::istream &in, bool from_file, char &wrong_symbol, u_long 
                 operator_in_stack = operators.pop();
                 
                 if ((operator_in_stack == 'p')  || (operator_in_stack == 'm') || (operator_in_stack == 'f') || (operator_in_stack == 'e'))
-                    rpn << ' ' << operator_in_stack << ' ';
+                    rpn << ' ' << operator_in_stack;
                 
                 else
                     rpn << operator_in_stack;
